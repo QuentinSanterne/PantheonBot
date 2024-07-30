@@ -18,13 +18,10 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Variables
 
-GUILD_PANTHEON = os.getenv('GUILD_PANTHEON')
-ROLE_PARKING = os.getenv('ROLE_PARKING')
-ROLE_GRUMPY = os.getenv('ROLE_GRUMPY')
-ROLE_BATEAU = os.getenv('ROLE_BATEAU')
-SALON_PARKING = os.getenv('SALON_PARKING')
-SALON_GRUMPY = os.getenv('SALON_GRUMPY')
-SALON_BATEAU = os.getenv('SALON_BATEAU')
+GUILD_TEST = os.getenv('GUILD_TEST')
+ROLE_TEST = os.getenv('ROLE_TEST')
+GRUMPY_TEST = os.getenv('GRUMPY_TEST')
+SALON_TEST = os.getenv('SALON_TEST')
 GRUMPY1 = time(10, 0, 0)
 GRUMPY2 = time(17, 15, 0)
 
@@ -123,8 +120,8 @@ async def purgeold(interaction):
 @bot.tree.command(name="parking", description="Ping le rôle LoM_Parking dans le salon #Parking")
 @app_commands.checks.has_role("LoM_Parking")
 async def parking(interaction, num_parking: int, num_serveur: int, délai: int = 0, garnison: int = 0):
-    role = bot.get_guild(GUILD_PANTHEON).get_role(ROLE_PARKING) # Rôle "LoM_Parking"
-    channel = bot.get_guild(GUILD_PANTHEON).get_channel(SALON_PARKING) # Salon "#Parking"
+    role = bot.get_guild(GUILD_TEST).get_role(ROLE_TEST) # Rôle "LoM_Parking"
+    channel = bot.get_guild(GUILD_TEST).get_channel(SALON_TEST) # Salon "#Parking"
 
     if role is None or channel is None:
         await interaction.response.send_message("Erreur : rôle ou salon introuvable")
@@ -142,8 +139,8 @@ async def parking(interaction, num_parking: int, num_serveur: int, délai: int =
 
 async def ping_grumpy():
     await bot.wait_until_ready()
-    role = bot.get_guild(GUILD_PANTHEON).get_role(ROLE_GRUMPY)  # Rôle "LoM_Grumpy"
-    channel = bot.get_guild(GUILD_PANTHEON).get_channel(SALON_GRUMPY)  # Salon "#Grumpy"
+    role = bot.get_guild(GUILD_TEST).get_role(GRUMPY_TEST)  # Rôle "LoM_Grumpy"
+    channel = bot.get_guild(GUILD_TEST).get_channel(SALON_TEST)  # Salon "#Grumpy"
     await channel.send(f"{role.mention} Grumpy dans 5min, pensez à vous inscrire")
 
 async def background_grumpy():
