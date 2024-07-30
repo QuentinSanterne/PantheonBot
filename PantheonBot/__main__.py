@@ -47,12 +47,24 @@ async def on_raw_reaction_add(payload):
         # Traitement de la réaction
         await on_reaction_add(message, user)
 
+@bot.event
+async def on_raw_reaction_remove(payload):
+    # Vérifier si la réaction est une réaction que le bot doit traiter
+    guild_id = payload.guild_id
+    guild = discord.utils.get(bot.guilds, id=guild_id)
+    user = discord.utils.get(guild.members, id=payload.user_id)
+    if str(payload.emoji) == "✅" and bot.user != user:
+        # Récupérer le message et l'utilisateur qui a enlevé la réaction
+        channel = bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        # Traitement de la réaction
+        await on_reaction_remove(message, user)
 
 async def on_reaction_add(message, user):
         # Récupère le rôle mentionné dans le message
         role_id = None
         for line in message.content.splitlines():
-            if line.startswith(">>>Pour obtenir le rôle "):
+            if line.startswith(">>> Pour obtenir le rôle "):
                 # Extraire l'ID du rôle à partir de la mention du rôle
                 match = re.search(r'<@&(\d+)>', line)
                 if match:
@@ -65,6 +77,22 @@ async def on_reaction_add(message, user):
                 await user.add_roles(role)
                 await message.channel.send(f"{user.mention} a obtenu le rôle {role.mention}", delete_after=3)
 
+async def on_reaction_remove(message, user):
+        # Récupère le rôle mentionné dans le message
+        role_id = None
+        for line in message.content.splitlines():
+            if line.startswith(">>> Pour obtenir le rôle "):
+                # Extraire l'ID du rôle à partir de la mention du rôle
+                match = re.search(r'<@&(\d+)>', line)
+                if match:
+                    role_id = int(match.group(1))
+                    break
+        # Si un rôle est trouvé, assigne-le à l'utilisateur
+        if role_id:
+            role = discord.utils.get(message.guild.roles, id=role_id)
+            if role:
+                await user.remove_roles(role)
+                await message.channel.send(f"{user.mention} n'a plus le rôle {role.mention}", delete_after=3)
 
 # Commands
 
@@ -80,10 +108,10 @@ async def ping(interaction):
 #@app_commands.checks.has_role("LoM_admin")
 async def autorole(interaction, role: discord.Role, message: str):
     channel = interaction.channel
-    msg = f">>>Pour obtenir le rôle {role.mention}, réagissez avec ✅ \n\n"
+    msg = f">>> Pour obtenir le rôle {role.mention}, réagissez avec ✅ \n\n"
     msg += message 
-    await channel.send(msg)
-    await channel.last_message.add_reaction("✅")
+    msg_sent= await channel.send(msg)
+    await msg_sent.add_reaction("✅")
     await interaction.response.send_message("Done", ephemeral=True, delete_after=10)
 
 ## Purge nb message
