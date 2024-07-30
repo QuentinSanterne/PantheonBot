@@ -15,8 +15,8 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Variables
 
 GUILD_ID = 954437554810257468
-GRUMPY1 = time(15, 3, 0)
-GRUMPY2 = time(15, 5, 0)
+GRUMPY1 = time(16, 25, 0)
+GRUMPY2 = time(16, 31, 0)
 
 # Event
 
@@ -27,11 +27,7 @@ async def on_ready():
     print(f"Synced {len(synced)} command(s)")
     print(f'{bot.user.name} est connecté à discord!')
 
-# Commandes
-
-@bot.command(name="ping", help="Ping pong basique")
-async def ping(ctx):
-    await ctx.send("Pong!")
+# Commands
 
 # Slash Commands
 
@@ -49,7 +45,7 @@ async def autorole(interaction, role: discord.Role, message: str):
     msg += message 
     await channel.send(msg)
     await channel.last_message.add_reaction("✅")
-    await interaction.response.send_message("Done", ephemeral=True)
+    await interaction.response.send_message("Done", ephemeral=True, delete_after=10)
 
 ## Purge nb message
 
@@ -62,7 +58,7 @@ async def purge(interaction, number: int):
     async for message in channel.history(limit=number):
         messages.append(message)
     await channel.delete_messages(messages)
-    await interaction.followup.send(f"{number} messages supprimés", ephemeral=True)
+    await interaction.followup.send(f"{number} messages supprimés", ephemeral=True, delete_after=5)
 
 
 ## Purge les messages de la journée
@@ -98,7 +94,7 @@ async def parking(interaction, num_parking: int, num_serveur: int, délai: int =
     if garnison > 0:
         message += f", {garnison} joueurs en garnison"
     await channel.send(f"{message} {role.mention}")
-    await interaction.response.send_message("Done", ephemeral=True)
+    await interaction.response.send_message("Done", ephemeral=True, delete_after=2)
 
 # Tâches
 
@@ -112,15 +108,16 @@ async def background_grumpy():
     now = datetime.now(timezone.utc)
     if now.time() > GRUMPY2:  # Make sure loop doesn't start after {GRUMPY2} as then it will send immediately the first time as negative seconds will make the sleep yield instantly
         tomorrow = datetime.combine(datetime.now() + timedelta(days=1), time(0))
-        seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
+        seconds = (tomorrow - now.replace(tzinfo=None)).total_seconds()  # Seconds until tomorrow (midnight)
         await asyncio.sleep(seconds)  # Sleep until tomorrow and then the loop will start 
     
     while True:
         now = datetime.now(timezone.utc)
         target_time = datetime.combine(datetime.now(), GRUMPY1)  # Grumpy 12h05 - 5min
         seconds_until_target = (target_time - now.replace(tzinfo=None)).total_seconds()
-        await asyncio.sleep(seconds_until_target)  # Sleep until we hit the target time
-        await ping_grumpy()  # Envoie le message de ping
+        if seconds_until_target > 0:
+            await asyncio.sleep(seconds_until_target)  # Sleep until we hit the target time
+            await ping_grumpy()  # Envoie le message de ping
         
         now = datetime.now(timezone.utc)
         target_time = datetime.combine(datetime.now(), GRUMPY2)  # Grumpy 19h15 - 5min
