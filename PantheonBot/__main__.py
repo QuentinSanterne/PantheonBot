@@ -77,7 +77,7 @@ async def ping(interaction):
 ## Message get-role
 
 @bot.tree.command(name="autorole", description="Écris le message à réagir pour obtenir un role")
-@app_commands.checks.has_role("LoM_admin")
+#@app_commands.checks.has_role("LoM_admin")
 async def autorole(interaction, role: discord.Role, message: str):
     channel = interaction.channel
     msg = f">>>Pour obtenir le rôle {role.mention}, réagissez avec ✅ \n\n"
@@ -89,7 +89,7 @@ async def autorole(interaction, role: discord.Role, message: str):
 ## Purge nb message
 
 @bot.tree.command(name="purge", description="Supprimer les x derniers messages du salon")
-@app_commands.checks.has_role("LoM_admin")
+#@app_commands.checks.has_role("LoM_admin")
 async def purge(interaction, number: int):
     await interaction.response.defer(ephemeral=True)
     channel = interaction.channel
@@ -103,7 +103,7 @@ async def purge(interaction, number: int):
 ## Purge les messages de la journée
 
 @bot.tree.command(name="purgeold", description="Supprimer les messages envoyés dans les dernières 20h")
-@app_commands.checks.has_role("LoM_admin")
+#@app_commands.checks.has_role("LoM_admin")
 async def purgeold(interaction):
     await interaction.response.defer(ephemeral=True)
     channel = interaction.channel
@@ -118,7 +118,7 @@ async def purgeold(interaction):
 ## Alerte parking
 
 @bot.tree.command(name="parking", description="Ping le rôle LoM_Parking dans le salon #Parking")
-@app_commands.checks.has_role("LoM_Parking")
+@app_commands.checks.has_role("Ouais")
 async def parking(interaction, num_parking: int, num_serveur: int, délai: int = 0, garnison: int = 0):
     role = bot.get_guild(GUILD_TEST).get_role(ROLE_TEST) # Rôle "LoM_Parking"
     channel = bot.get_guild(GUILD_TEST).get_channel(SALON_TEST) # Salon "#Parking"
