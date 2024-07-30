@@ -1,6 +1,7 @@
 import os
 import discord
 import asyncio
+import re
 from discord.ext import commands
 from discord import app_commands
 from datetime import datetime, timezone, timedelta, time
@@ -9,12 +10,15 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 intents = discord.Intents.default()
+intents.members = True
+intents.messages = True
+intents.presences = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Variables
 
-GUILD_ID = 954437554810257468
+GUILD_PANTHEON = 954437554810257468
 GRUMPY1 = time(16, 25, 0)
 GRUMPY2 = time(16, 31, 0)
 
@@ -26,6 +30,38 @@ async def on_ready():
     synced = await bot.tree.sync()
     print(f"Synced {len(synced)} command(s)")
     print(f'{bot.user.name} est connecté à discord!')
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    # Vérifier si la réaction est une réaction que le bot doit traiter
+    guild_id = payload.guild_id
+    guild = discord.utils.get(bot.guilds, id=guild_id)
+    user = discord.utils.get(guild.members, id=payload.user_id)
+    if str(payload.emoji) == "✅" and bot.user != user:
+        # Récupérer le message et l'utilisateur qui a ajouté la réaction
+        channel = bot.get_channel(payload.channel_id)
+        message = await channel.fetch_message(payload.message_id)
+        # Traitement de la réaction
+        await on_reaction_add(message, user)
+
+
+async def on_reaction_add(message, user):
+        # Récupère le rôle mentionné dans le message
+        role_id = None
+        for line in message.content.splitlines():
+            if line.startswith(">>>Pour obtenir le rôle "):
+                # Extraire l'ID du rôle à partir de la mention du rôle
+                match = re.search(r'<@&(\d+)>', line)
+                if match:
+                    role_id = int(match.group(1))
+                    break
+        # Si un rôle est trouvé, assigne-le à l'utilisateur
+        if role_id:
+            role = discord.utils.get(message.guild.roles, id=role_id)
+            if role:
+                await user.add_roles(role)
+                await message.channel.send(f"{user.mention} a obtenu le rôle {role.mention}", delete_after=3)
+
 
 # Commands
 
@@ -58,7 +94,7 @@ async def purge(interaction, number: int):
     async for message in channel.history(limit=number):
         messages.append(message)
     await channel.delete_messages(messages)
-    await interaction.followup.send(f"{number} messages supprimés", ephemeral=True, delete_after=5)
+    await interaction.followup.send(f"{number} messages supprimés", ephemeral=True)
 
 
 ## Purge les messages de la journée
@@ -100,8 +136,8 @@ async def parking(interaction, num_parking: int, num_serveur: int, délai: int =
 
 async def ping_grumpy():
     await bot.wait_until_ready()
-    role = bot.get_guild(GUILD_ID).get_role(1264265938446848043)  # Rôle "LoM_Grumpy"
-    channel = bot.get_guild(GUILD_ID).get_channel(1248571403314266183)  # Salon "#Grumpy"
+    role = bot.get_guild(GUILD_PANTHEON).get_role(1264265938446848043)  # Rôle "LoM_Grumpy"
+    channel = bot.get_guild(GUILD_PANTHEON).get_channel(1248571403314266183)  # Salon "#Grumpy"
     await channel.send(f"{role.mention} Grumpy dans 5min, pensez à vous inscrire")
 
 async def background_grumpy():
