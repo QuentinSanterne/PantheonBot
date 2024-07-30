@@ -117,8 +117,8 @@ async def purgeold(interaction):
 @bot.tree.command(name="parking", description="Ping le rôle LoM_Parking dans le salon #Parking")
 @app_commands.checks.has_role("LoM_Parking")
 async def parking(interaction, num_parking: int, num_serveur: int, délai: int = 0, garnison: int = 0):
-    role = bot.get_guild(GUILD_ID).get_role(954447331653193808) # Rôle "LoM_Parking"
-    channel = bot.get_guild(GUILD_ID).get_channel(1248571403314266183) # Salon "#Parking"
+    role = bot.get_guild(GUILD_PANTHEON).get_role(954447331653193808) # Rôle "LoM_Parking"
+    channel = bot.get_guild(GUILD_PANTHEON).get_channel(1248571403314266183) # Salon "#Parking"
 
     if role is None or channel is None:
         await interaction.response.send_message("Erreur : rôle ou salon introuvable")
