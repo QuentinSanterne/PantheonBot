@@ -149,9 +149,10 @@ async def purgeold(interaction):
 @bot.tree.command(name="parking", description="Ping le rôle LoM_Parking dans le salon #Parking")
 @app_commands.checks.has_role("LoM_Parking")
 async def parking(interaction, num_parking: int, num_serveur: int, délai: int = 0, garnison: int = 0):
-    role = bot.get_guild(GUILD_PANTHEON).get_role(ROLE_PARKING) # Rôle "LoM_Parking"
-    channel = bot.get_guild(GUILD_PANTHEON).get_channel(SALON_PARKING) # Salon "#Parking"
-
+    guild = interaction.guild
+    role = guild.get_role(int(ROLE_PARKING)) # Rôle "LoM_Parking"
+    channel = guild.get_channel(int(SALON_PARKING)) # Salon "#Parking"
+    
     if role is None or channel is None:
         await interaction.response.send_message("Erreur : rôle ou salon introuvable")
         return
@@ -168,8 +169,8 @@ async def parking(interaction, num_parking: int, num_serveur: int, délai: int =
 
 async def ping_grumpy():
     await bot.wait_until_ready()
-    role = bot.get_guild(GUILD_PANTHEON).get_role(ROLE_GRUMPY)  # Rôle "LoM_Grumpy"
-    channel = bot.get_guild(GUILD_PANTHEON).get_channel(SALON_GRUMPY)  # Salon "#Grumpy"
+    role = bot.get_guild(int(GUILD_PANTHEON)).get_role(int(ROLE_GRUMPY))  # Rôle "LoM_Grumpy"
+    channel = bot.get_guild(int(GUILD_PANTHEON)).get_channel(int(SALON_GRUMPY))  # Salon "#Grumpy"
     await channel.send(f"{role.mention} Grumpy dans 5min, pensez à vous inscrire")
 
 async def background_grumpy():
