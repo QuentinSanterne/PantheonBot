@@ -76,7 +76,7 @@ async def on_reaction_add(message, user):
             role = discord.utils.get(message.guild.roles, id=role_id)
             if role:
                 await user.add_roles(role)
-                await message.channel.send(f"{user.mention} a obtenu le rôle {role.mention}", delete_after=3)
+                await message.channel.send(f"{user.mention} a obtenu le rôle {role}", delete_after=3)
 
 async def on_reaction_remove(message, user):
         # Récupère le rôle mentionné dans le message
@@ -93,7 +93,7 @@ async def on_reaction_remove(message, user):
             role = discord.utils.get(message.guild.roles, id=role_id)
             if role:
                 await user.remove_roles(role)
-                await message.channel.send(f"{user.mention} n'a plus le rôle {role.mention}", delete_after=3)
+                await message.channel.send(f"{user.mention} n'a plus le rôle {role}", delete_after=3)
 
 # Commands
 
