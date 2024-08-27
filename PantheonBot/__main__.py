@@ -25,12 +25,16 @@ SALON_PARKING = os.getenv('SALON_PARKING')
 SALON_GRUMPY = os.getenv('SALON_GRUMPY')
 GRUMPY1 = time(10, 0, 0)
 GRUMPY2 = time(17, 15, 0)
+ready_once = False
+
 
 # Event
 
 @bot.event
 async def on_ready():
-    bot.loop.create_task(background_grumpy())
+    if not ready_once:
+        bot.loop.create_task(background_grumpy())
+        ready_once = True
     synced = await bot.tree.sync()
     print(f"Synced {len(synced)} command(s)")
     print(f'{bot.user.name} est connecté à discord!')
