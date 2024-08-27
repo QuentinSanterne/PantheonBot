@@ -32,6 +32,7 @@ ready_once = False
 
 @bot.event
 async def on_ready():
+    global ready_once
     if not ready_once:
         bot.loop.create_task(background_grumpy())
         ready_once = True
